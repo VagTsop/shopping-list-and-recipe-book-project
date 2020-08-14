@@ -4,13 +4,14 @@ import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
-interface AuthResponseData {
+export interface AuthResponseData {
     kind: string;
     idToken: string;
     email: string;
     refreshToken: string;
     expiresIn: string;
     localId: string;
+    registered?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -38,4 +39,16 @@ export class AuthService {
         }));
 
     }
+
+    login(email: string, password: string) {
+      return  this.http.post<AuthResponseData>('add you firebase endpoint for login with your existing email/password',  
+          { 
+            email: email,
+            password: password,
+            returnSecureToken: true
+          }
+        );
+
+    }
+
 } 
