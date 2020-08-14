@@ -1,8 +1,9 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { throwError, Subject } from 'rxjs';
+import { User } from './user.model';
 
 export interface AuthResponseData {
     kind: string;
@@ -16,37 +17,65 @@ export interface AuthResponseData {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+    user = new Subject<User>();
+
+
     constructor(private http: HttpClient) { }
 
 
     signup(email: string, password: string) {
-       return this.http.post<AuthResponseData>('add you firebase endpoint for sign up with email/password',
-            { 
-              email: email,
-              password: password,
-              returnSecureToken: true
+        return this.http.post<AuthResponseData>('add you firebase endpoint for sign up with email/password',
+            {
+                email: email,
+                password: password,
+                returnSecureToken: true
             }
-        ).pipe(catchError(this.handleError));
-          
-        
-    
-
+        ).pipe(
+            catchError(this.handleError),
+            tap(resData => {
+                this.handleAuthentication(
+                    resData.email,
+                    resData.localId,
+                    resData.idToken,
+                    +resData.expiresIn);
+          })
+        );
     }
 
     login(email: string, password: string) {
-      return  this.http.post<AuthResponseData>('add you firebase endpoint for login with email/password',  
-          { 
-            email: email,
-            password: password,
-            returnSecureToken: true
-          }
+        return this.http.post<AuthResponseData>('add you firebase endpoint for login with your email and password',
+            {
+                email: email,
+                password: password,
+                returnSecureToken: true
+            }
         )
-          .pipe(catchError(this.handleError));
+            .pipe(catchError(this.handleError),  tap(resData => {
+                this.handleAuthentication(
+                    resData.email,
+                    resData.localId,
+                    resData.idToken,
+                    +resData.expiresIn);
+            })
+          );
     }
-    
+
+    private handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+        const expirationData = new Date(
+            new Date().getTime() + expiresIn * 1000
+            );
+      const user = new User(
+          email,
+          userId,
+          token,
+          expirationData
+     );
+     this.user.next(user);
+    }
+
     private handleError(errorRes: HttpErrorResponse) {
         let errorMessage = 'An unknown error ocurred!';
-        if (!errorRes.error || !errorRes.error.error ) {
+        if (!errorRes.error || !errorRes.error.error) {
             return throwError(errorMessage);
         }
         switch (errorRes.error.error.message) {
@@ -55,11 +84,11 @@ export class AuthService {
                 break;
             case 'EMAIL_NOT_FOUND':
                 errorMessage = 'This email does not exist';
-                break;    
-            case  'INVALID_PASSWORD':  
+                break;
+            case 'INVALID_PASSWORD':
                 errorMessage = 'This password is not correct';
                 break;
         }
         return throwError(errorMessage);
     }
-  }
+}
