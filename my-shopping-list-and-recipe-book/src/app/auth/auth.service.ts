@@ -17,7 +17,7 @@ export class AuthService {
 
 
     signup(email: string, password: string) {
-       return this.http.post<AuthResponseData>('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=(firebase web api key without parens )',
+       return this.http.post<AuthResponseData>('add you firebase endpoint for sign up with email/password',
             { 
               email: email,
               password: password,
