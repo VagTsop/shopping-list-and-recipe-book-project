@@ -1,5 +1,5 @@
 
-# Recipe book and Shoping list app in Angular 10
+# Recipe book and Shoping list app in Angular 8
 
 This app stores recipes and the necessary shopping list.
 
