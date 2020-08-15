@@ -26,7 +26,7 @@ ng serve
 
 ## Screenshot
 
-
+![pasta](spaghetti.png)
 
 ---
 
