@@ -18,7 +18,7 @@ export class  DataStorageService {
         const recipes = this.recipeService.getRecipes();
         this.http
           .put(
-              'add you firebase endpoint for sign up with email/password',
+              'https://shopping-list-recipe-boo-f8884.firebaseio.com/recipes.json',
          recipes 
      )
         
@@ -30,7 +30,7 @@ export class  DataStorageService {
     fetchRecipes() {
         
       return this.http.get<Recipe[]>(
-         'add your firebase endpoint for login with your email and password '
+         'https://shopping-list-recipe-boo-f8884.firebaseio.com/recipes.json'
        )
        .pipe(
           map(recipes => {
