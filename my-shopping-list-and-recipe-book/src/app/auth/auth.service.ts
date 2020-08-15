@@ -25,7 +25,7 @@ export class AuthService {
 
 
     signup(email: string, password: string) {
-        return this.http.post<AuthResponseData>('add your firebase endpoint for sign up with email/password',
+        return this.http.post<AuthResponseData>('add your endpoint for sign up with email/password',
             {
                 email: email,
                 password: password,
@@ -44,7 +44,7 @@ export class AuthService {
     }
 
     login(email: string, password: string) {
-        return this.http.post<AuthResponseData>('add your firebase endpoint for login with your email/password',
+        return this.http.post<AuthResponseData>('add your endpoint for login with your email/password',
             {
                 email: email,
                 password: password,
